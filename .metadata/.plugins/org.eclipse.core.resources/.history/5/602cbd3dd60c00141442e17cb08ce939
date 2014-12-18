@@ -1,0 +1,16 @@
+package com.amazon.design.proxypattern;
+
+public class FibonacciSeriesProxy implements FibonacciSeries {
+
+	private Map<Long, Long> seriesCache;
+	
+	public FibonacciSeriesProxy() {
+		this.seriesCache = new HashMap<Long, Long>();
+	}
+	
+	@Override
+	public long getFibonacciNumber(long n) {
+		
+	}
+
+}

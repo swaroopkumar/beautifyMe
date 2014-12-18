@@ -1,0 +1,7 @@
+1404302525301	Encapsulate field 'basicMonthlyRate'
+1404302609261	Rename type 'MonthlyBillTest'
+1404302674967	Encapsulate field 'inclMins'
+1404302680005	Encapsulate field 'ratePerExcessMin'
+1404302683762	Encapsulate field 'addlLineRate'
+1404303391950	Extract method 'calculateExtraMinsCharge'
+1404311548701	Delete element

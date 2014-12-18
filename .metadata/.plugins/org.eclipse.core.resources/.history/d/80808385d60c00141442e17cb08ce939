@@ -1,0 +1,26 @@
+package com.amazon.design.proxypattern;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class FibonacciSeriesProxy implements FibonacciSeries {
+
+	private Map<Long, Long> seriesCache;
+	private FibonacciSeries fibonacciSeries;
+	
+	public FibonacciSeriesProxy() {
+		this.seriesCache = new HashMap<Long, Long>();
+		this.fibonacciSeries = new FibonacciSeriesImpl();
+	}
+	
+	@Override
+	public long getFibonacciNumber(long n) {
+		if (seriesCache.containsKey(n)) {
+			return seriesCache.get(n);
+		} else {
+			long number = this.fibonacciSeries.getFibonacciNumber(n);
+			seriesCache.put(n, number);
+		}
+	}
+
+}

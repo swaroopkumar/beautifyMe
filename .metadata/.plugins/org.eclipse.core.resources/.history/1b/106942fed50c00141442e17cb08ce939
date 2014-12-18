@@ -1,0 +1,11 @@
+package com.amazon.design.proxypattern;
+
+public class FibonacciSeriesProxy implements FibonacciSeries {
+
+	@Override
+	public long getFibonacciNumber(long n) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

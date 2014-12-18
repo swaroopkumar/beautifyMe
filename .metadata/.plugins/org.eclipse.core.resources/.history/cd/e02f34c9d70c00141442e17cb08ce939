@@ -1,0 +1,15 @@
+package com.amazon.design.proxypattern;
+
+public class FibonacciSeriesImpl implements FibonacciSeries {
+
+	@Override
+	public long getFibonacciNumber(long n) {
+		if (n == 0) {
+			reutrn 0;
+		} else if (n == 1) {
+			return 1;
+		}
+		return getFibonacciNumber(n - 2) + getFibonacciNumber(n - 1);
+	}
+
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="junit.framework.TestCase"/>
+<fullyQualifiedTypeName name="jdk.nashorn.internal.runtime.regexp.joni.ApplyCaseFoldArg"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="com.amazon.tdd.airportproblem.Airport"/>
+<fullyQualifiedTypeName name="org.junit.Test"/>
+<fullyQualifiedTypeName name="com.amazon.design.rectangletask.Rectangle"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="com.amazon.design.temperaturetask.Conversions"/>
+<fullyQualifiedTypeName name="com.sun.javafx.scene.layout.region.Margins.Converter"/>
+</qualifiedTypeNameHistroy>
