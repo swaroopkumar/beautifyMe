@@ -45,9 +45,9 @@ class Salon(models.Model):
         return self.salon_name
 
 class SalonTimings(models.Model):
-    Day_Of_Week_Choices = ((1,'Monday'),(2,'Tuesday'),(3,'Wednesday'),(4,'Thursday'),(5,'Friday'),(6,'Saturday'),
+    Day_Of_Week = ((1,'Monday'),(2,'Tuesday'),(3,'Wednesday'),(4,'Thursday'),(5,'Friday'),(6,'Saturday'),
                            (7,'Sunday'))
-    Day_of_week = models.IntegerField(choices=Day_Of_Week_Choices,null=False,unique=False,default=1)
+    Day_of_week = models.IntegerField(choices=Day_Of_Week,null=False,unique=False,default=1)
     open_time = models.TimeField(null=False,blank = False,default=datetime.now)
     end_time= models.TimeField(null=False,blank = False,default=datetime.now)
     Salon_Id = models.ForeignKey(Salon)
@@ -60,15 +60,15 @@ class MenuItem(models.Model):
     Salon_Id = models.ForeignKey(Salon)
 
 class Stylist(models.Model):
-    Salon_Type = ((1,'Makeup Artist'),(2,'Hair Stylist'),(3,'Massasuer'),(4,'Hair and Makeup Artist'))
-    First_name = models.CharField(max_length=150,null=False,blank=False,unique=True)
-    Last_name = models.CharField(max_length=150,null=False,blank=False,unique=True)
-    Rating = models.IntegerField(null=False,blank=False)
-    Specialization=models.CharField(max_length=200,null=False,blank=False)
-    Photo_Count = models.IntegerField(null=False,blank=False)
-    Short_Description = models.CharField(max_length=200,null=False,blank=False)
-    Type = models.IntegerField(null=False,blank=False,choices=Salon_Type)
-    Salon_Id = models.ForeignKey(Salon)
+    salon_type = ((1,'Makeup Artist'),(2,'Hair Stylist'),(3,'Massasuer'),(4,'Hair and Makeup Artist'))
+    first_name = models.CharField(max_length=150,null=False,blank=False,unique=True)
+    last_name = models.CharField(max_length=150,null=False,blank=False,unique=True)
+    rating = models.IntegerField(null=False,blank=False)
+    specialization=models.CharField(max_length=200,null=False,blank=False)
+    photo_count = models.IntegerField(null=False,blank=False)
+    short_description = models.CharField(max_length=200,null=False,blank=False)
+    type = models.IntegerField(null=False,blank=False,choices=salon_type)
+    salon = models.ForeignKey(Salon)
     def __str__(self):
         return self.First_name + ' ' + self.Last_name
 
