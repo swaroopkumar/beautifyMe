@@ -3,6 +3,7 @@ from .models import Area
 from .models import Salon
 from .models import Stylist
 from .models import Review
+from django.contrib.auth.models import User
 
 class AreaSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -27,3 +28,8 @@ class ReviewSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Review
         fields = ('salon','stylist','user','photo_count','rating','review_text')
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name')
