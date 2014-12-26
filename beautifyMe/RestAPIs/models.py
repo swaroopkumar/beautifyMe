@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -17,17 +18,6 @@ class PhoneNumber(models.Model):
     is_verified = models.BooleanField(null = False,blank = False,default=False)
     def __str__(self):
         return ' '.join([self.area_code,self.phone_number])
-     
-class Customer(models.Model):
-    Customer_FB_GP_ID_REASON_choices = ((1,'Facebook'),(2,'GooglePlus')) 
-    Customer_name = models.CharField(max_length=200,null=False,blank=False)
-    Email_Id = models.CharField(max_length=200,null=False,blank=False)
-    is_mail_Id_verified = models.BooleanField(null=False,blank=False,default=False)
-    Phone_Number = models.ForeignKey(PhoneNumber)
-    Customer_FB_GP_ID = models.CharField(max_length=30,null=False,blank=False,default=0)
-    Customer_FB_GP_ID_REASON = models.IntegerField(null=False,blank=False,choices=Customer_FB_GP_ID_REASON_choices,default=1)
-    def __str__(self):
-        return self.Customer_name
 
 class Salon(models.Model):
     Price_Range_Choices = (
@@ -60,7 +50,7 @@ class SalonTimings(models.Model):
     Day_of_week = models.IntegerField(choices=Day_Of_Week_Choices,null=False,unique=False,default=1)
     open_time = models.TimeField(null=False,blank = False,default=datetime.now)
     end_time= models.TimeField(null=False,blank = False,default=datetime.now)
-    Salon_Id = models.ForeignKey(Salon)     
+    Salon_Id = models.ForeignKey(Salon)
 
 class MenuItem(models.Model):
     Item_Name= models.CharField(max_length=150,null=False,blank=False,unique=True)
@@ -70,23 +60,25 @@ class MenuItem(models.Model):
     Salon_Id = models.ForeignKey(Salon)
 
 class Stylist(models.Model):
-    Salon_Type_Choices = ((1,'Makeup Artist'),(2,'Hair Stylist'),(3,'Massasuer'),(4,'Hair and Makeup Artist'))
-    Stylist_First_name = models.CharField(max_length=150,null=False,blank=False,unique=True)
-    Stylist_Last_name = models.CharField(max_length=150,null=False,blank=False,unique=True)
+    Salon_Type = ((1,'Makeup Artist'),(2,'Hair Stylist'),(3,'Massasuer'),(4,'Hair and Makeup Artist'))
+    First_name = models.CharField(max_length=150,null=False,blank=False,unique=True)
+    Last_name = models.CharField(max_length=150,null=False,blank=False,unique=True)
     Rating = models.IntegerField(null=False,blank=False)
     Specialization=models.CharField(max_length=200,null=False,blank=False)
     Photo_Count = models.IntegerField(null=False,blank=False)
     Short_Description = models.CharField(max_length=200,null=False,blank=False)
-    Stylist_Type = models.IntegerField(null=False,blank=False,)
+    Type = models.IntegerField(null=False,blank=False,choices=Salon_Type)
     Salon_Id = models.ForeignKey(Salon)
+    def __str__(self):
+        return self.First_name + ' ' + self.Last_name
 
 class Review(models.Model):
-    salon_Id = models.ForeignKey(Salon) 
-    Stylist_Id = models.ForeignKey(Stylist)
-    Customer_Id = models.ForeignKey(Customer) 
-    Photo_Count = models.IntegerField(null=False,unique=False,default=0)
-    Rating = models.IntegerField(null=False,blank=False)
-    Review_String = models.CharField(max_length= 200,null=True)
+    salon = models.ForeignKey(Salon) 
+    stylist = models.ForeignKey(Stylist)
+    user = models.ForeignKey(User,default=1)
+    photo_count = models.IntegerField(null=False,unique=False,default=0)
+    rating = models.IntegerField(null=False,blank=False)
+    review_text = models.CharField(max_length=200,null=True)
      
 
 

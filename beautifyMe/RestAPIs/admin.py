@@ -6,7 +6,6 @@ from models import *
 class AreaAdmin(admin.ModelAdmin):
     list_display = ('Area_Name','Pin_Code', 'City_Name')
 
-admin.site.register(Customer)
 admin.site.register(PhoneNumber)
 admin.site.register(Area, AreaAdmin)
 admin.site.register(Salon)

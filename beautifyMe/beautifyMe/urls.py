@@ -1,13 +1,14 @@
-#Adding a comment 
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from rest_framework import routers
-from RestAPIs.models import Area
-from RestAPIs.views import AreaViewSet
+from RestAPIs.views import AreaViewSet, ReviewViewSet, SalonViewSet, StylistViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'areas', AreaViewSet)
+router.register(r'salons', SalonViewSet)
+router.register(r'stylists', StylistViewSet)
+router.register(r'reviews', ReviewViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
