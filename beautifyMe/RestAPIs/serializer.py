@@ -8,28 +8,29 @@ from django.contrib.auth.models import User
 class AreaSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Area
-        fields = ('Area_Name','Pin_Code', 'City_Name')
+        fields = ('id', 'area_name', 'pin_code', 'city_name')
 
 class SalonSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Salon
-        fields = ('salon_name', 'Address_Line1', 'Land_mark', 'Photo_Count', 'Area', 
-                  'Price_Range', 'Email_Id', 'is_mail_Id_verified', 
-                  'Salon_Type', 'Rating', 'Parking_Available', 'Latitude', 
-                  'Longitude')
+        fields = ('id', 'salon_name', 'address_line1', 'land_mark', 'area', 
+                  'price_range', 'email_id', 'is_mail_id_verified', 
+                  'salon_type', 'rating', 'parking_available', 'latitude', 
+                  'longitude')
 
 class StylistSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Stylist
-        fields = ('First_name','Last_name', 'Rating','Specialization',
-                  'Photo_Count','Short_Description', 'Type','Salon_Id')
+        fields = ('id', 'first_name','last_name', 'rating','specialization',
+                  'short_description', 'type','salon')
 
 class ReviewSerializer(serializers.HyperlinkedModelSerializer):
+    photos = serializers.ImageField()
     class Meta:
         model = Review
-        fields = ('salon','stylist','user','photo_count','rating','review_text')
+        fields = ('id', 'salon','stylist','user','rating','review_text')
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name')
+        fields = ('id', 'username', 'first_name', 'last_name')
