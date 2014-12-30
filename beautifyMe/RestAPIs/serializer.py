@@ -21,8 +21,8 @@ class SalonSerializer(serializers.HyperlinkedModelSerializer):
 class StylistSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Stylist
-        fields = ('First_name','Last_name', 'Rating','Specialization',
-                  'Photo_Count','Short_Description', 'Type','Salon_Id')
+        fields = ('first_name','last_name', 'rating','specialization',
+                  'photo_count','short_description', 'type','salon')
 
 class ReviewSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
