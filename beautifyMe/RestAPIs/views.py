@@ -4,7 +4,8 @@ from rest_framework import viewsets, generics
 from .serializer import AreaSerializer, SalonSerializer, StylistSerializer, ReviewSerializer, UserSerializer
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.exceptions import PermissionDenied
+from _testcapi import raise_exception
 
 class AreaViewSet(viewsets.ModelViewSet):
     queryset = Area.objects.all()
@@ -53,14 +54,25 @@ class ReviewCreateView(generics.CreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
-    parser_classes = (MultiPartParser, FormParser)
 
-    def post(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        serializer.validated_data['user'] = request.user
         serializer.save()
-        return Response();
+        return Response(serializer.data, status=201)
 
+class ReviewUpdateView(generics.UpdateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        review = self.get_object()
+        if not request.user.is_staff and request.user != review.user:
+            raise PermissionDenied('Review cannot be modified by current user')
+        return generics.UpdateAPIView.update(self, request, *args, **kwargs)
+    
 class ReviewsBySalonView(generics.ListAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer

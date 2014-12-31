@@ -3,7 +3,8 @@ from django.contrib import admin
 from rest_framework import routers
 from RestAPIs.views import AreaViewSet, UserViewSet, SalonRetrieveView, StylistRetrieveView, StylistsBySalonView,\
     SalonCreateView, StylistCreateView, ReviewsBySalonView, ReviewsByStylistView,\
-    ReviewCreateView, ReviewsByUserView, SalonUpdateView, StylistUpdateView
+    ReviewCreateView, ReviewsByUserView, SalonUpdateView, StylistUpdateView,\
+    ReviewUpdateView
 
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -22,9 +23,10 @@ urlpatterns = [
     url(r'^salons/(?P<pk>\d+)/reviews/$', ReviewsBySalonView.as_view(), name='salon-reviews-list'),
     url(r'^stylists/(?P<pk>\d+)/$', StylistRetrieveView.as_view(), name='stylist-detail'),
     url(r'^stylists/$', StylistCreateView.as_view(), name='stylist-create'),
-    url(r'^stylists/update/(?P<pk>\d+)/$', StylistUpdateView.as_view(), name='stylist-detail'),
+    url(r'^stylists/update/(?P<pk>\d+)/$', StylistUpdateView.as_view(), name='stylist-update'),
     url(r'^stylists/(?P<pk>\d+)/reviews/$', ReviewsByStylistView.as_view(), name='stylist-reviews-list'),
     url(r'^reviews/$', ReviewCreateView.as_view(), name='review-create'),
+    url(r'^reviews/update/(?P<pk>\d+)/$', ReviewUpdateView.as_view(), name='review-update'),
     url(r'^users/(?P<pk>\d+)/reviews/$', ReviewsByUserView.as_view(), name='user-reviews-list'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', include(admin.site.urls))

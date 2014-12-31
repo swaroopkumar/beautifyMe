@@ -5,12 +5,12 @@ from .models import Stylist
 from .models import Review
 from django.contrib.auth.models import User
 
-class AreaSerializer(serializers.HyperlinkedModelSerializer):
+class AreaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Area
         fields = ('id', 'area_name', 'pin_code', 'city_name')
 
-class SalonSerializer(serializers.HyperlinkedModelSerializer):
+class SalonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Salon
         fields = ('id', 'salon_name', 'address_line1', 'land_mark', 'area', 
@@ -18,19 +18,18 @@ class SalonSerializer(serializers.HyperlinkedModelSerializer):
                   'salon_type', 'rating', 'parking_available', 'latitude', 
                   'longitude')
 
-class StylistSerializer(serializers.HyperlinkedModelSerializer):
+class StylistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stylist
         fields = ('id', 'first_name','last_name', 'rating','specialization',
                   'short_description', 'type','salon')
 
-class ReviewSerializer(serializers.HyperlinkedModelSerializer):
-    photos = serializers.ImageField()
+class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
-        fields = ('id', 'salon','stylist','user','rating','review_text')
+        fields = ('id', 'salon', 'stylist', 'rating', 'review_text')
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'first_name', 'last_name')
