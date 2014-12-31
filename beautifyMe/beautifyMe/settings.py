@@ -37,7 +37,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'RestAPIs',
-    'rest_framework'
+    'rest_framework',
+    'allauth',
+    
 )
 
 MIDDLEWARE_CLASSES = (
@@ -76,6 +78,14 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'SCOPE': ['email', 'publish_stream','read_friendlists',],
+        'METHOD': 'oauth2',
+        'LOCALE_FUNC': 'path.to.callable',
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v2.2'}}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
