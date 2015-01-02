@@ -25,6 +25,7 @@ class StylistSerializer(serializers.ModelSerializer):
                   'short_description', 'type','salon')
 
 class ReviewSerializer(serializers.ModelSerializer):
+    stylist =StylistSerializer()
     class Meta:
         model = Review
         fields = ('id', 'salon', 'stylist', 'rating', 'review_text')
