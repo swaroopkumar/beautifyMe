@@ -4,12 +4,9 @@ from rest_framework import viewsets, generics
 from .serializer import AreaSerializer, SalonSerializer, StylistSerializer, UserSerializer
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.exceptions import PermissionDenied
-from RestAPIs.serializer import ReviewCreateSerializer, ReviewListSerializer,\
-     ReviewsBySalonSerializer
-from rest_framework.views import APIView
+from RestAPIs.serializer import ReviewCreateSerializer, ReviewListSerializer
 from rest_framework.generics import GenericAPIView
-from rest_framework.exceptions import PermissionDenied, APIException
+from rest_framework.exceptions import APIException, PermissionDenied
 from math import radians, cos, sin, asin, sqrt
 
 class AreaViewSet(viewsets.ModelViewSet):
@@ -133,8 +130,8 @@ class ReviewsBySalonView(GenericAPIView):
         stylist_ids = set()
         user_ids = set()
         for review in reviews_serialized:
-              stylist_ids.add(review['stylist'])
-              user_ids.add(review['user'])
+            stylist_ids.add(review['stylist'])
+            user_ids.add(review['user'])
         stylist_objects = Stylist.objects.filter(pk__in=stylist_ids)
         user_objects = User.objects.filter(pk__in=user_ids)
         stylists_serialized = StylistSerializer(stylist_objects, many=True).data
