@@ -4,6 +4,7 @@ from .models import Salon
 from .models import Stylist
 from .models import Review
 from django.contrib.auth.models import User
+from rest_framework.relations import SlugRelatedField, PrimaryKeyRelatedField
 
 class AreaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,15 +19,26 @@ class SalonSerializer(serializers.ModelSerializer):
                   'salon_type', 'rating', 'parking_available', 'latitude', 
                   'longitude')
 
+class SalonMinDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Salon
+        fields = ('id', 'salon_name', 'area', 'rating')
+
+
 class StylistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stylist
         fields = ('id', 'first_name','last_name', 'rating','specialization',
                   'short_description', 'type','salon')
+        
 
-class ReviewSerializer(serializers.ModelSerializer):
-    stylist =StylistSerializer()
-    class Meta:
+class ReviewListSerializer(serializers.ModelSerializer):
+     class Meta:
+        model = Review
+        fields = ('id', 'salon', 'stylist', 'rating', 'review_text', 'user')
+        
+class ReviewCreateSerializer(serializers.ModelSerializer):
+     class Meta:
         model = Review
         fields = ('id', 'salon', 'stylist', 'rating', 'review_text')
 
@@ -34,3 +46,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'first_name', 'last_name')
+        
+class ReviewsBySalonSerializer(serializers.Serializer):
+      reviews = ReviewListSerializer(many=True)
+      stylists = StylistSerializer(many=True)
+      users = UserSerializer(many=True)
+
