@@ -4,8 +4,8 @@ from rest_framework import viewsets, generics
 from .serializer import AreaSerializer, SalonSerializer, StylistSerializer, ReviewSerializer, UserSerializer
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.exceptions import PermissionDenied
-from _testcapi import raise_exception
+from rest_framework.exceptions import PermissionDenied, APIException
+from math import radians, cos, sin, asin, sqrt
 
 class AreaViewSet(viewsets.ModelViewSet):
     queryset = Area.objects.all()
@@ -15,6 +15,47 @@ class AreaViewSet(viewsets.ModelViewSet):
 class SalonRetrieveView(generics.RetrieveAPIView):
     queryset = Salon.objects.all()
     serializer_class = SalonSerializer
+
+class SalonListBySearchLocationView(generics.ListAPIView):
+    queryset = Salon.objects.all()
+    serializer_class = SalonSerializer
+    
+    def list(self, request, *args, **kwargs):
+        lat = request.query_params['lat']
+        lon = request.query_params['lon']
+        city = request.query_params['city']
+        self.queryset = get_salons_within_range(float(lat), float(lon), city)
+        if self.queryset == None:
+            raise APIException(detail='Could not find any salons for the given location.')
+        return generics.ListAPIView.list(self, request, *args, **kwargs)
+
+def get_salons_within_range(latitude, longitude, city=None):
+    if latitude == None or longitude == None:
+        return None
+    city_salons = Salon.objects.filter(area__city_name=city)
+    result = set()
+    for salon in city_salons:
+        if get_distance_using_haversine(longitude, latitude, salon.longitude, salon.latitude) <= 5:
+            result.add(salon.pk)
+    return Salon.objects.filter(pk__in=result)
+
+def get_distance_using_haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points 
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians 
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+    # haversine formula 
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+
+    # 6367 km is the radius of the Earth
+    km = 6367 * c
+    return km
 
 class SalonCreateView(generics.CreateAPIView):
     queryset = Salon.objects.all()
@@ -69,9 +110,10 @@ class ReviewUpdateView(generics.UpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         review = self.get_object()
-        if not request.user.is_staff and request.user != review.user:
+        if request.user.is_staff or request.user == review.user:
+            return generics.UpdateAPIView.update(self, request, *args, **kwargs)
+        else:
             raise PermissionDenied('Review cannot be modified by current user')
-        return generics.UpdateAPIView.update(self, request, *args, **kwargs)
     
 class ReviewsBySalonView(generics.ListAPIView):
     queryset = Review.objects.all()

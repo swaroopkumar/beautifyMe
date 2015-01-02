@@ -1,10 +1,10 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib import admin
 from rest_framework import routers
 from RestAPIs.views import AreaViewSet, UserViewSet, SalonRetrieveView, StylistRetrieveView, StylistsBySalonView,\
     SalonCreateView, StylistCreateView, ReviewsBySalonView, ReviewsByStylistView,\
     ReviewCreateView, ReviewsByUserView, SalonUpdateView, StylistUpdateView,\
-    ReviewUpdateView
+    ReviewUpdateView, SalonListBySearchLocationView
 
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^salons/(?P<pk>\d+)/$', SalonRetrieveView.as_view(), name='salon-detail'),
     url(r'^salons/$', SalonCreateView.as_view(), name='salon-create'),
+    url(r'^salons/search/$', SalonListBySearchLocationView.as_view(), name='salon-search'),
     url(r'^salons/update/(?P<pk>\d+)/$', SalonUpdateView.as_view(), name='salon-update'),
     url(r'^salons/(?P<pk>\d+)/stylists/$', StylistsBySalonView.as_view(), name='salon-stylist-list'),
     url(r'^salons/(?P<pk>\d+)/reviews/$', ReviewsBySalonView.as_view(), name='salon-reviews-list'),
