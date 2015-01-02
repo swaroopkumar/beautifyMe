@@ -1,9 +1,14 @@
 from .models import Area, Salon, Stylist, Review
 from django.contrib.auth.models import User
 from rest_framework import viewsets, generics
-from .serializer import AreaSerializer, SalonSerializer, StylistSerializer, ReviewSerializer, UserSerializer
+from .serializer import AreaSerializer, SalonSerializer, StylistSerializer, UserSerializer
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
+from RestAPIs.serializer import ReviewCreateSerializer, ReviewListSerializer,\
+     ReviewsBySalonSerializer
+from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from rest_framework.exceptions import PermissionDenied, APIException
 from math import radians, cos, sin, asin, sqrt
 
@@ -95,7 +100,7 @@ class StylistUpdateView(generics.UpdateAPIView):
 
 class ReviewCreateView(generics.CreateAPIView):
     queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
+    serializer_class = ReviewCreateSerializer
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
@@ -107,7 +112,7 @@ class ReviewCreateView(generics.CreateAPIView):
 
 class ReviewUpdateView(generics.UpdateAPIView):
     queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
+    serializer_class = ReviewCreateSerializer
     permission_classes = [IsAuthenticated]
 
     def update(self, request, *args, **kwargs):
@@ -117,19 +122,29 @@ class ReviewUpdateView(generics.UpdateAPIView):
         else:
             raise PermissionDenied('Review cannot be modified by current user')
     
-class ReviewsBySalonView(generics.ListAPIView):
+class ReviewsBySalonView(GenericAPIView):
     queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
 
-    def list(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         if kwargs.get('pk') is None:
             return Response('[]')
-        self.queryset = Review.objects.filter(salon=kwargs.get('pk'))
-        return generics.ListAPIView.list(self, request, *args, **kwargs)
+        review_objects = Review.objects.filter(salon=kwargs.get('pk'))
+        reviews_serialized = ReviewListSerializer(review_objects, many=True).data
+        stylist_ids = set()
+        user_ids = set()
+        for review in reviews_serialized:
+              stylist_ids.add(review['stylist'])
+              user_ids.add(review['user'])
+        stylist_objects = Stylist.objects.filter(pk__in=stylist_ids)
+        user_objects = User.objects.filter(pk__in=user_ids)
+        stylists_serialized = StylistSerializer(stylist_objects, many=True).data
+        users_serialized = UserSerializer(user_objects, many=True).data
+        valid_data = {'reviews' : reviews_serialized, 'stylists':stylists_serialized,'users': users_serialized}
+        return Response(valid_data, status=200)
 
 class ReviewsByStylistView(generics.ListAPIView):
     queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
+    serializer_class = ReviewListSerializer
 
     def list(self, request, *args, **kwargs):
         if kwargs.get('pk') is None:
@@ -139,7 +154,7 @@ class ReviewsByStylistView(generics.ListAPIView):
 
 class ReviewsByUserView(generics.ListAPIView):
     queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
+    serializer_class = ReviewListSerializer
 
     def list(self, request, *args, **kwargs):
         if kwargs.get('pk') is None:
@@ -151,3 +166,5 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
+    
+    
