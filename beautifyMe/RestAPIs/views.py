@@ -21,23 +21,25 @@ class SalonListBySearchLocationView(generics.ListAPIView):
     serializer_class = SalonSerializer
     
     def list(self, request, *args, **kwargs):
+        #TODO: use the below lat,lon,city from constant variables or more cleaner way
         lat = request.query_params['lat']
         lon = request.query_params['lon']
         city = request.query_params['city']
-        self.queryset = get_salons_within_range(float(lat), float(lon), city)
-        if self.queryset == None:
+        salons_serialized = get_salons_within_range(float(lat), float(lon), city)
+        if salons_serialized == None:
             raise APIException(detail='Could not find any salons for the given location.')
-        return generics.ListAPIView.list(self, request, *args, **kwargs)
+        return Response({'salons': salons_serialized}, status=200)
 
 def get_salons_within_range(latitude, longitude, city=None):
     if latitude == None or longitude == None:
         return None
     city_salons = Salon.objects.filter(area__city_name=city)
-    result = set()
+    salons = []
     for salon in city_salons:
         if get_distance_using_haversine(longitude, latitude, salon.longitude, salon.latitude) <= 5:
-            result.add(salon.pk)
-    return Salon.objects.filter(pk__in=result)
+            serializer = SalonSerializer(salon)
+            salons.append(serializer.data)
+    return salons
 
 def get_distance_using_haversine(lon1, lat1, lon2, lat2):
     """
