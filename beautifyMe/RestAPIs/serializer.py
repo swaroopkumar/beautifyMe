@@ -30,7 +30,20 @@ class StylistSerializer(serializers.ModelSerializer):
         fields = ('id', 'first_name','last_name', 'rating','specialization',
                   'short_description', 'type','salon')
 
+class StylistMinDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Stylist
+        fields = ('id', 'first_name','last_name', 'rating')
+        
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'first_name', 'last_name')
+
+
 class ReviewListSerializer(serializers.ModelSerializer):
+    stylist = StylistMinDataSerializer()
+    user = UserSerializer()    
     class Meta:
         model = Review
         fields = ('id', 'salon', 'stylist', 'rating', 'review_text', 'user')
@@ -40,8 +53,4 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         model = Review
         fields = ('id', 'salon', 'stylist', 'rating', 'review_text')
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'first_name', 'last_name')
 

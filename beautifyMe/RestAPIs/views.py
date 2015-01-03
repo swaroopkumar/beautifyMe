@@ -1,13 +1,14 @@
 from .models import Area, Salon, Stylist, Review
 from django.contrib.auth.models import User
 from rest_framework import viewsets, generics
-from .serializer import AreaSerializer, SalonSerializer, StylistSerializer, UserSerializer
+from .serializer import AreaSerializer, SalonSerializer, StylistSerializer, UserSerializer,StylistMinDataSerializer
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from RestAPIs.serializer import ReviewCreateSerializer, ReviewListSerializer
 from rest_framework.generics import GenericAPIView
 from rest_framework.exceptions import APIException, PermissionDenied
 from math import radians, cos, sin, asin, sqrt
+import time
 
 class AreaViewSet(viewsets.ModelViewSet):
     queryset = Area.objects.all()
@@ -119,25 +120,17 @@ class ReviewUpdateView(generics.UpdateAPIView):
         else:
             raise PermissionDenied('Review cannot be modified by current user')
     
-class ReviewsBySalonView(GenericAPIView):
+class ReviewsBySalonView(generics.ListAPIView):
     queryset = Review.objects.all()
+    serializer_class = ReviewListSerializer
 
     def get(self, request, *args, **kwargs):
         if kwargs.get('pk') is None:
             return Response('[]')
-        review_objects = Review.objects.filter(salon=kwargs.get('pk'))
-        reviews_serialized = ReviewListSerializer(review_objects, many=True).data
-        stylist_ids = set()
-        user_ids = set()
-        for review in reviews_serialized:
-            stylist_ids.add(review['stylist'])
-            user_ids.add(review['user'])
-        stylist_objects = Stylist.objects.filter(pk__in=stylist_ids)
-        user_objects = User.objects.filter(pk__in=user_ids)
-        stylists_serialized = StylistSerializer(stylist_objects, many=True).data
-        users_serialized = UserSerializer(user_objects, many=True).data
-        valid_data = {'reviews' : reviews_serialized, 'stylists':stylists_serialized,'users': users_serialized}
-        return Response(valid_data, status=200)
+
+        self.queryset= Review.objects.all().select_related('stylist','user')
+        return generics.ListAPIView.list(self, request, *args, **kwargs)
+
 
 class ReviewsByStylistView(generics.ListAPIView):
     queryset = Review.objects.all()
