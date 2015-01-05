@@ -1,14 +1,15 @@
 from .models import Area, Salon, Stylist, Review
 from django.contrib.auth.models import User
 from rest_framework import viewsets, generics
-from .serializer import AreaSerializer, SalonSerializer, StylistSerializer, UserSerializer,StylistMinDataSerializer
+from .serializer import AreaSerializer, SalonSerializer, StylistSerializer, UserSerializer
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from RestAPIs.serializer import ReviewCreateSerializer, ReviewListSerializer
 from rest_framework.generics import GenericAPIView
 from rest_framework.exceptions import APIException, PermissionDenied
 from math import radians, cos, sin, asin, sqrt
-import time
+import APIUtils
+
 
 class AreaViewSet(viewsets.ModelViewSet):
     queryset = Area.objects.all()
@@ -24,7 +25,7 @@ class SalonListBySearchLocationView(generics.ListAPIView):
     serializer_class = SalonSerializer
     
     def list(self, request, *args, **kwargs):
-        #TODO: use the below lat,lon,city from constant variables or more cleaner way
+        # TODO: use the below lat,lon,city from constant variables or more cleaner way
         lat = request.query_params['lat']
         lon = request.query_params['lon']
         city = request.query_params['city']
@@ -55,7 +56,7 @@ def get_distance_using_haversine(lon1, lat1, lon2, lat2):
     # haversine formula 
     dlon = lon2 - lon1 
     dlat = lat2 - lat1 
-    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
     c = 2 * asin(sqrt(a))
 
     # 6367 km is the radius of the Earth
@@ -120,17 +121,18 @@ class ReviewUpdateView(generics.UpdateAPIView):
         else:
             raise PermissionDenied('Review cannot be modified by current user')
     
-class ReviewsBySalonView(generics.ListAPIView):
+class ReviewsBySalonView(GenericAPIView):
     queryset = Review.objects.all()
-    serializer_class = ReviewListSerializer
-
     def get(self, request, *args, **kwargs):
         if kwargs.get('pk') is None:
             return Response('[]')
+        
+        response_data = {'reviews_data': APIUtils.APIUtils.getReviewsBySalonWithStylistAndUserData(**kwargs) ,
+                          'aggregate_rating':APIUtils.APIUtils.getSalonOverallRatingandVotes(**kwargs) }
 
-        self.queryset= Review.objects.all().select_related('stylist','user')
-        return generics.ListAPIView.list(self, request, *args, **kwargs)
-
+        return Response(response_data, status=200)
+             
+        
 
 class ReviewsByStylistView(generics.ListAPIView):
     queryset = Review.objects.all()
