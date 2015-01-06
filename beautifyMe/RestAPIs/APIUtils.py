@@ -12,7 +12,7 @@ class APIUtils :
         aggregate_rating = 0.0
         try :
             total_rows = cursor.fetchone()
-            print total_rows[0]/total_rows[1]
+            aggregate_rating= total_rows[0]/total_rows[1]
         except ZeroDivisionError:
             pass
         return {'total_rating' :round(aggregate_rating,1),'total_votes':total_rows[1]}
@@ -30,4 +30,8 @@ class APIUtils :
             review['stylist'] = review['stylist']['id']
             review['user'] = review['user']['id']
         
-        return {'review_data' : review_dict ,'stylist_data' : stylist_dict ,'user_data' : users_dict}      
+        return {'review_data' : review_dict ,'stylist_data' : stylist_dict ,'user_data' : users_dict}  
+    
+    @staticmethod
+    def getPhoneNumbersBySalon(**kwargs):
+            

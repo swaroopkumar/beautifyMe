@@ -8,7 +8,7 @@ from RestAPIs.serializer import ReviewCreateSerializer, ReviewListSerializer
 from rest_framework.generics import GenericAPIView
 from rest_framework.exceptions import APIException, PermissionDenied
 from math import radians, cos, sin, asin, sqrt
-import APIUtils
+from APIUtils import APIUtils
 
 
 class AreaViewSet(viewsets.ModelViewSet):
@@ -127,8 +127,8 @@ class ReviewsBySalonView(GenericAPIView):
         if kwargs.get('pk') is None:
             return Response('[]')
         
-        response_data = {'reviews_data': APIUtils.APIUtils.getReviewsBySalonWithStylistAndUserData(**kwargs) ,
-                          'aggregate_rating':APIUtils.APIUtils.getSalonOverallRatingandVotes(**kwargs) }
+        response_data = {'reviews_data': APIUtils.getReviewsBySalonWithStylistAndUserData(**kwargs) ,
+                          'aggregate_rating':APIUtils.getSalonOverallRatingandVotes(**kwargs) }
 
         return Response(response_data, status=200)
              

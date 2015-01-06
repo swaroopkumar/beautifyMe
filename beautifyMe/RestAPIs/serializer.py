@@ -3,6 +3,8 @@ from .models import Area
 from .models import Salon
 from .models import Stylist
 from .models import Review
+from .models import PhoneNumber
+from .models import Photo
 from django.contrib.auth.models import User
 
 class AreaSerializer(serializers.ModelSerializer):
@@ -52,5 +54,18 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ('id', 'salon', 'stylist', 'rating', 'review_text')
+        
+class PhoneNumberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= PhoneNumber
+        fields = ('id','country_code','area_code','phone_number','is_verified','foreign_key','foreign_key_type')
+        
+class PhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Photo
+        fields = ('id','foriegn_key','foreign_key_type','cloud_id','creation_date')
+        
+        
+
 
 
