@@ -1,20 +1,18 @@
-from .models import Area, Salon, Stylist, Review
+from .models import Area, Salon, Stylist, Review,PhoneNumber,MenuItem
 from django.contrib.auth.models import User
 from rest_framework import viewsets, generics
-from .serializer import AreaSerializer, SalonSerializer, StylistSerializer, UserSerializer
+from .serializer import AreaSerializer, SalonSerializer, StylistSerializer, UserSerializer,PhoneNumberSerializer
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from RestAPIs.serializer import ReviewCreateSerializer, ReviewListSerializer
+from RestAPIs.serializer import ReviewCreateSerializer, ReviewListSerializer,\
+    MenuItemSerializer
 from rest_framework.generics import GenericAPIView
 from rest_framework.exceptions import APIException, PermissionDenied
 from math import radians, cos, sin, asin, sqrt
 from APIUtils import APIUtils
+from rest_framework.decorators import permission_classes
 
 
-class AreaViewSet(viewsets.ModelViewSet):
-    queryset = Area.objects.all()
-    serializer_class = AreaSerializer
-    permission_classes = [IsAdminUser]
     
 class SalonRetrieveView(generics.RetrieveAPIView):
     queryset = Salon.objects.all()
@@ -96,6 +94,12 @@ class StylistUpdateView(generics.UpdateAPIView):
     queryset = Stylist.objects.all()
     serializer_class = StylistSerializer
     permission_classes = [IsAdminUser]
+    
+class PhoneNumberUpdateView(generics.UpdateAPIView):
+    queryset = PhoneNumber.objects.all()
+    serializer_class = PhoneNumberSerializer
+    permission_classes = [IsAdminUser]
+
 
 class ReviewCreateView(generics.CreateAPIView):
     queryset = Review.objects.all()
@@ -126,13 +130,19 @@ class ReviewsBySalonView(GenericAPIView):
     def get(self, request, *args, **kwargs):
         if kwargs.get('pk') is None:
             return Response('[]')
-        
         response_data = {'reviews_data': APIUtils.getReviewsBySalonWithStylistAndUserData(**kwargs) ,
                           'aggregate_rating':APIUtils.getSalonOverallRatingandVotes(**kwargs) }
 
         return Response(response_data, status=200)
              
-        
+class MenuItemsBySalonView(GenericAPIView):
+     queryset = MenuItem.objects.all()
+     def get(self,request,*args,**kwargs):
+        if kwargs.get('pk') is None:
+            return Response('[]')
+        response_data = {}
+        return Response(response_data,status=200)
+               
 
 class ReviewsByStylistView(generics.ListAPIView):
     queryset = Review.objects.all()
@@ -154,9 +164,15 @@ class ReviewsByUserView(generics.ListAPIView):
         self.queryset = Review.objects.filter(user=kwargs.get('pk'))
         return generics.ListAPIView.list(self, request, *args, **kwargs)
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    
+class MenuItemCreateView(generics.CreateAPIView):
+    queryset = MenuItem.objects.all()
+    serializer_class = MenuItemSerializer
     permission_classes = [IsAdminUser]
-    
-    
+
+
+class MenuItemUpdateView(generics.UpdateAPIView):
+    queryset = MenuItem.objects.all()
+    serializer_class = MenuItemSerializer
+    permission_classes = [IsAdminUser]
+

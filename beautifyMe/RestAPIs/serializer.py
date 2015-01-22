@@ -4,7 +4,7 @@ from .models import Salon
 from .models import Stylist
 from .models import Review
 from .models import PhoneNumber
-from .models import Photo
+from .models import Photo,MenuItem
 from django.contrib.auth.models import User
 
 class AreaSerializer(serializers.ModelSerializer):
@@ -58,12 +58,17 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
 class PhoneNumberSerializer(serializers.ModelSerializer):
     class Meta:
         model= PhoneNumber
-        fields = ('id','country_code','area_code','phone_number','is_verified','foreign_key','foreign_key_type')
+        fields = ('id','country_code','area_code','phone_number','is_verified')
         
 class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
-        fields = ('id','foriegn_key','foreign_key_type','cloud_id','creation_date')
+        fields = ('id','foreign_key_type','cloud_id')
+        
+class MenuItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MenuItem
+        fields = ('id','item_name','item_description','item_cost','duration','salon')
         
         
 

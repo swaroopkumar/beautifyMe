@@ -1,7 +1,8 @@
 from __future__ import division
-from RestAPIs.models import Review
-from .serializer import ReviewListSerializer
+from RestAPIs.models import Review, PhoneNumber, Salon,Stylist, MenuItem
+from .serializer import ReviewListSerializer,PhoneNumberSerializer,MenuItemSerializer
 from django.db import connection
+from django.contrib.contenttypes.models import ContentType
 
 
 class APIUtils :
@@ -33,5 +34,19 @@ class APIUtils :
         return {'review_data' : review_dict ,'stylist_data' : stylist_dict ,'user_data' : users_dict}  
     
     @staticmethod
-    def getPhoneNumbersBySalon(**kwargs):
-            
+    def getPhoneNumberBySalon(**kwargs):
+        phone_objects = PhoneNumber.objects.all().filter(object_id = kwargs.get('pk'),content_type = ContentType.objects.get_for_model(Salon))
+        return PhoneNumberSerializer(phone_objects,many=True).data
+        
+    @staticmethod
+    def getPhoneNumberByStylist(**kwargs):
+        phone_objects = PhoneNumber.objects.all().filter(object_id = kwargs.get('pk'),content_type = ContentType.objects.get_for_model(Stylist))
+        return PhoneNumberSerializer(phone_objects,many=True).data
+    
+    @staticmethod
+    def getMenuItemsBySalon(**kwargs):
+        menu_objects = MenuItem.objects.all().filter(salon=kwargs.get('pk'))
+        return MenuItemSerializer(menu_objects,many=True).data
+    
+    
+                
